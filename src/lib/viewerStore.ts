@@ -20,17 +20,15 @@ const createViewerStore = () => {
 
   return {
     subscribe,
-    init: () => {
-      if (typeof window !== 'undefined') {
-        const currentId = parseInt(location.hash.replace('#', ''), 10);
+    init: (id?: number) => {
+      if (!id) return;
 
-        if (currentId > 0 && currentId <= 708) {
-          set({ currentPokemon: currentId, nextPokemon: currentId + 1, previousPokemon: currentId - 1 });
-        }
+      if (id >= 1 && id <= 898) {
+        set({ currentPokemon: id, nextPokemon: id + 1, previousPokemon: id - 1 });
       }
     },
     setPokemon: (id: number) => {
-      location.hash = `#${id}`;
+      window.history.replaceState({}, 'Svelte Pokedex', `/${id}`);
 
       update((state) => {
         state.currentPokemon = id;

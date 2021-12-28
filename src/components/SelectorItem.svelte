@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Pokedex } from '../utils/pokedexStore';
-  import { viewerStore } from '../utils/viewerStore';
+  import type { Pokedex } from '$lib/pokedexStore';
+  import { viewerStore } from '$lib/viewerStore';
 
   export let pokemon: Pokedex;
 </script>

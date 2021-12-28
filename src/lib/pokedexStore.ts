@@ -6,6 +6,7 @@ export interface Pokedex {
   forms: Species[];
   game_indices: GameIndex[];
   height: number;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   held_items: any[];
   id: number;
   is_default: boolean;
@@ -13,6 +14,7 @@ export interface Pokedex {
   moves: Move[];
   name: string;
   order: number;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   past_types: any[];
   species: Species;
   sprites: Sprites;
@@ -186,16 +188,25 @@ const createPokedexStore = () => {
 
   return {
     subscribe,
-    init: () => {
-      if (typeof window !== 'undefined') {
-        set(JSON.parse(window.localStorage.getItem('pokedex')) || []);
+    hydrate: (preloadPokemon: Pokedex) => {
+      const localCache = JSON.parse(window.localStorage.getItem('pokedex'));
+      const currentPokemonIndex = localCache ? localCache.findIndex((pokemon) => pokemon.id === preloadPokemon.id) : -1;
+
+      if (currentPokemonIndex === -1) {
+        set([...(localCache || []), preloadPokemon].sort((a, b) => a.id - b.id));
       }
+
+      set(localCache || []);
     },
     getPokemon: async (id: number) => {
-      if (id < 1 || id > 807) {
+      if (!window) {
+        return null;
+      }
+      if (id < 1 || id > 898) {
         return null;
       }
 
+      // Hard sync with localhost
       const currentPokemonIndex = get(pokedexStore).findIndex((pokemon) => pokemon.id === id);
 
       if (currentPokemonIndex === -1) {
@@ -209,10 +220,7 @@ const createPokedexStore = () => {
         update((pokedex) => {
           const newData = [...pokedex, pokemonData].sort((a, b) => a.id - b.id);
 
-          // Save new data to local storage
-          if (typeof window !== 'undefined') {
-            window.localStorage.setItem('pokedex', JSON.stringify(newData));
-          }
+          window.localStorage.setItem('pokedex', JSON.stringify(newData));
 
           return newData;
         });

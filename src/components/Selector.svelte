@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Pokedex } from 'src/utils/pokedexStore';
-  import Selectoritem from './selectoritem.svelte';
+  import type { Pokedex } from '$lib/pokedexStore';
+  import Selectoritem from './SelectorItem.svelte';
 
   export let previousPokemon: Promise<Pokedex>;
   export let nextPokemon: Promise<Pokedex>;
